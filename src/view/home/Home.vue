@@ -7,60 +7,25 @@
       <recommend-view :recommend="recommend"/>
       <feature/>
       <tab-control class="tab-control" :titles="['流行','新款','精选']"/>
-      <ul>
-    <li>11</li>
-    <li>21</li>
-    <li>31</li>
-    <li>41</li>
-    <li>51</li>
-    <li>61</li>
-    <li>71</li>
-    <li>81</li>
-    <li>91</li>
-    <li>101</li>
-     <li>11</li>
-    <li>21</li>
-    <li>31</li>
-    <li>41</li>
-    <li>51</li>
-    <li>61</li>
-    <li>71</li>
-    <li>81</li>
-    <li>91</li>
-    <li>101</li>
-     <li>11</li>
-    <li>21</li>
-    <li>31</li>
-    <li>41</li>
-    <li>51</li>
-    <li>61</li>
-    <li>71</li>
-    <li>81</li>
-    <li>91</li>
-    <li>101</li>
-     <li>11</li>
-    <li>21</li>
-    <li>31</li>
-    <li>41</li>
-    <li>51</li>
-    <li>61</li>
-    <li>71</li>
-    <li>81</li>
-    <li>91</li>
-    <li>101</li>
-  </ul>
+      <goods-list :goods="goods['pop'].list">
+      </goods-list>
+    
   </div>
 </template>
 
 <script>
-import {getHomeMultidata} from 'network/home'
+import {getHomeMultidata,getHomeGoods} from 'network/home'
 
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabControl/TabControl'
+import GoodsList from 'components/content/goods/GoodsList'
+import GoodsListItem from 'components/content/goods/GoodsListItem'
 
 import HomeSwiper from './homeContent/HomeSwiper'
 import RecommendView from './homeContent/RecommendView'
 import Feature from './homeContent/FeatureView'
+
+const fs =require('fs');
 export default {
   name:'Home',
   components:{
@@ -68,20 +33,43 @@ export default {
       HomeSwiper,
       RecommendView,
       Feature,
-      TabControl
+      TabControl,
+      GoodsList,
+      GoodsListItem
   },
   data(){
       return {
           banner:[],
-          recommend:[]
+          recommend:[],
+          goods:{
+              'pop':{page:0,list:[]},
+              'new':{page:0,list:[]},
+              'sell':{page:0,list:[]}
+          }
       }
   },
   created(){
       //请求多个数据
-      getHomeMultidata().then(res => {
+      this.getMultidata();
+      this.getHomeGoods('pop');
+      this.getHomeGoods('new');
+      this.getHomeGoods('sell');
+  },
+  methods:{
+      getMultidata(){
+          getHomeMultidata().then(res => {
           this.banner = res.data.banner.list;
           this.recommend = res.data.recommend.list;
       })
+      },
+      getHomeGoods(type){
+          const page = this.goods[type].page + 1;
+          getHomeGoods(type,page).then(res => {
+          this.goods[type].list.push(...res.data.list);
+          this.goods[type].page += 1;
+          //console.log(res);
+        })
+      }
   }
 }
 </script>
@@ -103,5 +91,7 @@ export default {
     .tab-control {
         position: sticky;
         top: 44px;
+        background-color: #fff;
+        z-index: 9;
     }
 </style>

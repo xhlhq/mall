@@ -2,8 +2,12 @@ import axios from 'axios'
 
 function request(config){
     const instancel = axios.create({
-        baseURL: 'http://123.207.32.32:8000',
-        timeout: 5000
+        // baseURL: 'http://123.207.32.32:8000',
+        // timeout: 5000
+        // baseURL:"http://152.136.185.210:8000/api/n3",
+        // timeout:5000,
+        baseURL:"http://152.136.185.210:8000/api/n3",
+        timeout:5000
     })
 
     instancel.interceptors.request.use(config => {
